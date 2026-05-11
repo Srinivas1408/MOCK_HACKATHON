@@ -6,13 +6,16 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class Testing extends BaseTest {
+import java.util.List;
 
+public class Testing extends BaseTest
+{
+    //module 1
     @Test(priority = 1)
     public void loginSucessTest() {
 
         RegisterPage reg = new RegisterPage(driver, wait);
-        LoginPage login = new LoginPage(driver);
+        LoginPage login = new LoginPage(driver,wait);
 
         reg.openLoginPage();
 
@@ -43,7 +46,7 @@ public class Testing extends BaseTest {
     public void loginfailureTest()
     {
         RegisterPage reg = new RegisterPage(driver, wait);
-        LoginPage login = new LoginPage(driver);
+        LoginPage login = new LoginPage(driver,wait);
 
         reg.openLoginPage();
 
@@ -66,7 +69,7 @@ public class Testing extends BaseTest {
     public void LogoutTest()
     {
         RegisterPage reg = new RegisterPage(driver, wait);
-        LoginPage login = new LoginPage(driver);
+        LoginPage login = new LoginPage(driver,wait);
 
         reg.openLoginPage();
 
@@ -111,7 +114,7 @@ public class Testing extends BaseTest {
     public void emptyloginpasswordTest()
     {
         RegisterPage reg = new RegisterPage(driver, wait);
-        LoginPage login = new LoginPage(driver);
+        LoginPage login = new LoginPage(driver,wait);
 
         reg.openLoginPage();
 
@@ -136,6 +139,78 @@ public class Testing extends BaseTest {
         Assert.assertTrue(passwordError.isDisplayed());
         Assert.assertEquals(passwordError.getText().trim(), "*Password is required");
 
+    }
+
+    //module 2
+    @Test(priority = 5)
+    public void productDashboardTest()
+    {
+        LoginPage login = new LoginPage(driver,wait);
+        login.login("srinivas1408@gmail.com", "Abcd@1234");
+
+        List<WebElement> products = driver.findElements(
+                By.cssSelector(".card-body")
+        );
+
+        Assert.assertTrue(products.size() > 0);
+
+    }
+    @Test(priority = 6)
+    public void prductnamepriceTest()
+    {
+        LoginPage login = new LoginPage(driver,wait);
+        login.login("srinivas1408@gmail.com", "Abcd@1234");
+
+        List<WebElement> products = driver.findElements(
+                By.cssSelector(".card-body")
+        );
+
+        Assert.assertTrue(products.size() > 0);
+
+        for (WebElement product : products) {
+
+            WebElement name = product.findElement(By.tagName("b"));
+            WebElement price = product.findElement(By.tagName("h5"));
+
+            Assert.assertTrue(name.isDisplayed());
+            Assert.assertTrue(price.isDisplayed());
+        }
+    }
+    //error occured
+    @Test(priority = 7)
+    public void verifyProductPageAndCartFlow() {
+
+        LoginPage login = new LoginPage(driver, wait);
+        login.login("srinivas1408@gmail.com", "Abcd@1234");
+
+        ProductPage product = new ProductPage(driver, wait);
+
+        int before = product.getCartCount();
+
+        product.addFirstProductToCart();
+
+        int after = product.getCartCount();
+
+        Assert.assertEquals(after, before + 1);
+    }
+
+    @Test(priority = 8)
+    public void verifyMultipleProductsAddedFromListing() {
+
+        LoginPage login = new LoginPage(driver, wait);
+        login.login("srinivas1408@gmail.com", "Abcd@1234");
+
+        ProductPage product = new ProductPage(driver, wait);
+
+        int before = product.getCartCount();
+
+        product.addFirstProductToCart();
+        product.addSecondProductToCart();
+        product.addThirdProductToCart();
+
+        int after = product.getCartCount();
+
+        Assert.assertEquals(after, before + 3);
     }
 
     }
