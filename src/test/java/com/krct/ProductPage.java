@@ -6,7 +6,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 import java.util.List;
 
 public class ProductPage {
@@ -16,69 +15,48 @@ public class ProductPage {
 
     public ProductPage(WebDriver driver, WebDriverWait wait) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-    }
-
-    public void addFirstProductToCart() {
-
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".card-body")));
-
-        List<WebElement> products = driver.findElements(By.cssSelector(".card-body"));
-
-        WebElement firstProduct = products.get(0);
-
-        WebElement addToCartBtn = firstProduct.findElement(
-                By.xpath(".//button[contains(text(),'Add to Cart')]")
-        );
-
-        wait.until(ExpectedConditions.elementToBeClickable(addToCartBtn));
-        addToCartBtn.click();
+        this.wait = wait;
     }
 
     public int getCartCount() {
+        try {
+            // CHANGE THIS LOCATOR - Use this instead of your old one
+            WebElement cartBadge = driver.findElement(By.xpath("//button[@routerlink='/dashboard/cart']//label"));
+            String countText = cartBadge.getText();
 
-        WebElement cartBadge = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        By.cssSelector("label[style*='background-color']")
-                )
-        );
-
-        String text = cartBadge.getText().trim();
-
-        if (text.isEmpty()) {
+            if (countText.equals("")) {
+                return 0;
+            }
+            return Integer.parseInt(countText);
+        } catch (Exception e) {
             return 0;
         }
-
-        return Integer.parseInt(text);
     }
-    public void addSecondProductToCart() {
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".card-body")));
+    public void addProductByIndex(int productNumber) {
+        List<WebElement> allProducts = driver.findElements(By.cssSelector(".card-body"));
+        WebElement myProduct = allProducts.get(productNumber);
 
-        List<WebElement> products = driver.findElements(By.cssSelector(".card-body"));
+        // CHANGE THIS LOCATOR - Use this instead of your old one
+        WebElement addToCartButton = myProduct.findElement(By.xpath(".//button[contains(text(),'Add To Cart')]"));
+        addToCartButton.click();
 
-        WebElement secondProduct = products.get(1);
-
-        WebElement addToCartBtn = secondProduct.findElement(
-                By.xpath(".//button[contains(text(),'Add to Cart')]")
-        );
-
-        wait.until(ExpectedConditions.elementToBeClickable(addToCartBtn));
-        addToCartBtn.click();
+        // Wait for 1 second for cart to update
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+        }
     }
-    public void addThirdProductToCart() {
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".card-body")));
+    public void addFirstProduct() {
+        addProductByIndex(0);
+    }
 
-        List<WebElement> products = driver.findElements(By.cssSelector(".card-body"));
+    public void addSecondProduct() {
+        addProductByIndex(1);
+    }
 
-        WebElement thirdProduct = products.get(2);
-
-        WebElement addToCartBtn = thirdProduct.findElement(
-                By.xpath(".//button[contains(text(),'Add to Cart')]")
-        );
-
-        wait.until(ExpectedConditions.elementToBeClickable(addToCartBtn));
-        addToCartBtn.click();
+    public void addThirdProduct() {
+        addProductByIndex(2);
     }
 }

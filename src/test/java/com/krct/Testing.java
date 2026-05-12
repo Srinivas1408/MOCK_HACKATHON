@@ -178,39 +178,35 @@ public class Testing extends BaseTest
     }
     //error occured
     @Test(priority = 7)
-    public void verifyProductPageAndCartFlow() {
+    public void verifySingleProductAddToCart() {
 
-        LoginPage login = new LoginPage(driver, wait);
-        login.login("srinivas1408@gmail.com", "Abcd@1234");
+        LoginPage loginPage = new LoginPage(driver, wait);
+        ProductPage productPage = new ProductPage(driver, wait);
+        loginPage.login("srinivas1408@gmail.com", "Abcd@1234");
 
-        ProductPage product = new ProductPage(driver, wait);
+        int countBefore = productPage.getCartCount();
+        productPage.addFirstProduct();
+        int countAfter = productPage.getCartCount();
 
-        int before = product.getCartCount();
-
-        product.addFirstProductToCart();
-
-        int after = product.getCartCount();
-
-        Assert.assertEquals(after, before + 1);
+        Assert.assertEquals(countAfter, countBefore + 1);
     }
 
     @Test(priority = 8)
-    public void verifyMultipleProductsAddedFromListing() {
+    public void verifyMultipleProductsAddToCart() {
+        LoginPage loginPage = new LoginPage(driver, wait);
+        ProductPage productPage = new ProductPage(driver, wait);
+        loginPage.login("srinivas1408@gmail.com", "Abcd@1234");
 
-        LoginPage login = new LoginPage(driver, wait);
-        login.login("srinivas1408@gmail.com", "Abcd@1234");
+        int countBefore = productPage.getCartCount();
 
-        ProductPage product = new ProductPage(driver, wait);
+        productPage.addFirstProduct();
+        productPage.addSecondProduct();
+        productPage.addThirdProduct();
 
-        int before = product.getCartCount();
+        int countAfter = productPage.getCartCount();
 
-        product.addFirstProductToCart();
-        product.addSecondProductToCart();
-        product.addThirdProductToCart();
-
-        int after = product.getCartCount();
-
-        Assert.assertEquals(after, before + 3);
+        Assert.assertEquals(countAfter, countBefore + 3);
     }
+}
 
-    }
+
