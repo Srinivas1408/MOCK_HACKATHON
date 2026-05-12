@@ -1,6 +1,7 @@
 package com.krct;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
@@ -207,8 +208,132 @@ public class Testing extends BaseTest
         Assert.assertEquals(countAfter, countBefore + 3);
     }
 
+    //module 3
+    @Test(priority = 9)
+    public void verifyCartProductsWithNamesAndPrices()
+    {
+        LoginPage loginPage=new LoginPage(driver,wait);
+        ProductPage productPage=new ProductPage(driver,wait);
+        loginPage.login("srinivas1408@gmail.com", "Abcd@1234");
 
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".card-body")));
 
+        try {
+            productPage.addFirstProduct();
+            productPage.addSecondProduct();
+            productPage.addThirdProduct();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            productPage.clickCartIcon();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".cartSection")));
+
+        List<WebElement> cartProducts = driver.findElements(By.cssSelector(".cartSection h3"));
+
+        Assert.assertFalse(cartProducts.isEmpty());
+        Assert.assertEquals(cartProducts.size(), 3);
+    }
+    @Test(priority = 10)
+    public void verifyDeleteProductFromCart() throws InterruptedException
+    {
+        LoginPage loginPage=new LoginPage(driver,wait);
+        ProductPage productPage=new ProductPage(driver,wait);
+
+        loginPage.login("srinivas1408@gmail.com", "Abcd@1234");
+        Thread.sleep(3000);
+
+        productPage.addFirstProduct();
+        Thread.sleep(500);
+        productPage.addSecondProduct();
+        Thread.sleep(500);
+        productPage.addThirdProduct();
+
+        productPage.clickCartIcon();
+        Thread.sleep(2000);
+
+        int beforeCount = driver.findElements(By.cssSelector(".cartSection h3")).size();
+        Assert.assertEquals(beforeCount, 3);
+
+        driver.findElements(By.cssSelector(".cartSection .btn-danger")).get(0).click();
+        Thread.sleep(2000);
+
+        int afterCount = driver.findElements(By.cssSelector(".cartSection h3")).size();
+        Assert.assertEquals(afterCount, beforeCount - 1);
+    }
+    @Test(priority = 11)
+    public void verifySubtotalAndTotalAreEqual() throws InterruptedException {
+        LoginPage loginPage = new LoginPage(driver, wait);
+        ProductPage productPage = new ProductPage(driver, wait);
+
+        loginPage.login("srinivas1408@gmail.com", "Abcd@1234");
+        Thread.sleep(3000);
+
+        productPage.addFirstProduct();
+        productPage.addSecondProduct();
+        productPage.addThirdProduct();
+
+        productPage.clickCartIcon();
+        Thread.sleep(3000);
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+        Thread.sleep(2000);
+
+        String subtotalText = driver.findElement(By.xpath("//div[contains(@class,'subtotal')]")).getText();
+        String totalText = driver.findElement(By.xpath("//div[contains(@class,'total')]")).getText();
+
+        Assert.assertEquals(subtotalText, totalText);
+    }
+    @Test(priority = 12)
+    public void verifyOrderPlacedSuccessfully() throws InterruptedException {
+        LoginPage loginPage = new LoginPage(driver, wait);
+        ProductPage productPage = new ProductPage(driver, wait);
+
+        loginPage.login("srinivas1408@gmail.com", "Abcd@1234");
+        Thread.sleep(3000);
+
+        productPage.addFirstProduct();
+        productPage.addSecondProduct();
+        productPage.addThirdProduct();
+
+        productPage.clickCartIcon();
+        Thread.sleep(2000);
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        js.executeScript("window.scrollBy(0, 500)");
+        Thread.sleep(1000);
+
+        WebElement checkoutButton = driver.findElement(By.xpath("//button[contains(text(),'Checkout')]"));
+        js.executeScript("arguments[0].click();", checkoutButton);
+        Thread.sleep(2000);
+
+        WebElement countryField = driver.findElement(By.xpath("//input[@placeholder='Select Country']"));
+        js.executeScript("arguments[0].scrollIntoView(true);", countryField);
+        Thread.sleep(1000);
+        js.executeScript("arguments[0].click();", countryField);
+        countryField.sendKeys("India");
+        Thread.sleep(2000);
+
+        WebElement countryOption = driver.findElement(By.xpath("//span[text()=' India']"));
+        js.executeScript("arguments[0].click();", countryOption);
+        Thread.sleep(1000);
+
+        WebElement placeOrderButton = driver.findElement(By.xpath("//a[contains(text(),'Place Order')]"));
+        js.executeScript("arguments[0].scrollIntoView(true);", placeOrderButton);
+        Thread.sleep(1000);
+        js.executeScript("arguments[0].click();", placeOrderButton);
+        Thread.sleep(3000);
+
+        String successMessage = driver.findElement(By.cssSelector(".hero-primary")).getText();
+        Assert.assertEquals(successMessage, "THANKYOU FOR THE ORDER.");
+    }
 }
 
 
