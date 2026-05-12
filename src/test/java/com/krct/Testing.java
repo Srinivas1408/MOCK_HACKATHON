@@ -9,6 +9,8 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static com.krct.Screenshot.takeScreenshot;
+
 public class Testing extends BaseTest
 {
     //module 1
@@ -44,10 +46,9 @@ public class Testing extends BaseTest
         login.login("srinivas1408@gmail.com", "Abcd@1234");
     }
     @Test(priority = 2)
-    public void loginfailureTest()
-    {
+    public void loginfailureTest() {
         RegisterPage reg = new RegisterPage(driver, wait);
-        LoginPage login = new LoginPage(driver,wait);
+        LoginPage login = new LoginPage(driver, wait);
 
         reg.openLoginPage();
 
@@ -55,16 +56,17 @@ public class Testing extends BaseTest
 
         login.login("srinivas1408@gmail.com", "Abcd1234");
 
-        By errorMsg = By.cssSelector(".toast-message"); // adjust if needed
+        By errorMsg = By.cssSelector(".toast-message");
 
-        WebElement toast = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(errorMsg)
-        );
+        WebElement toast = wait.until(ExpectedConditions.visibilityOfElementLocated(errorMsg));
 
         String actualMsg = toast.getText();
 
-        Assert.assertTrue(actualMsg.contains("Incorrect email or password"));
+        if (actualMsg.contains("Incorrect")) {
+            Screenshot.takeScreenshot(driver, "loginFailure");  // Pass driver as first parameter
+        }
 
+        Assert.assertTrue(actualMsg.contains("Incorrect email or password"));
     }
     @Test(priority = 3)
     public void LogoutTest()
@@ -112,14 +114,13 @@ public class Testing extends BaseTest
 
     }
     @Test(priority = 4)
-    public void emptyloginpasswordTest()
-    {
+    public void emptyloginpasswordTest() {
         RegisterPage reg = new RegisterPage(driver, wait);
-        LoginPage login = new LoginPage(driver,wait);
+        LoginPage login = new LoginPage(driver, wait);
 
         reg.openLoginPage();
 
-        login.login(" ","");
+        login.login(" ", "");
 
         WebElement emailError = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
@@ -127,9 +128,12 @@ public class Testing extends BaseTest
                 )
         );
 
+        if (emailError.isDisplayed()) {
+            Screenshot.takeScreenshot(driver, "emptyEmailError");
+        }
+
         Assert.assertTrue(emailError.isDisplayed());
         Assert.assertEquals(emailError.getText().trim(), "*Email is required");
-
 
         WebElement passwordError = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
@@ -137,9 +141,12 @@ public class Testing extends BaseTest
                 )
         );
 
+        if (passwordError.isDisplayed()) {
+            Screenshot.takeScreenshot(driver, "emptyPasswordError");
+        }
+
         Assert.assertTrue(passwordError.isDisplayed());
         Assert.assertEquals(passwordError.getText().trim(), "*Password is required");
-
     }
 
     //module 2
