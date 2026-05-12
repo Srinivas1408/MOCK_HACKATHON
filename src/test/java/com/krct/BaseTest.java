@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -39,7 +40,10 @@ public class BaseTest {
     public void setup(ITestResult result) {
         test = extent.createTest(result.getMethod().getMethodName());
 
-        driver = new EdgeDriver();
+        EdgeOptions options = new EdgeOptions();
+        options.addArguments("--headless");
+
+        driver = new EdgeDriver(options);
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
