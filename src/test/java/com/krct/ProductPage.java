@@ -19,44 +19,43 @@ public class ProductPage {
     }
 
     public int getCartCount() {
-        try {
-            // CHANGE THIS LOCATOR - Use this instead of your old one
-            WebElement cartBadge = driver.findElement(By.xpath("//button[@routerlink='/dashboard/cart']//label"));
-            String countText = cartBadge.getText();
+        WebElement cartBadge = driver.findElement(By.xpath("//button[@routerlink='/dashboard/cart']//label"));
+        String countText = cartBadge.getText();
 
-            if (countText.equals("")) {
-                return 0;
-            }
-            return Integer.parseInt(countText);
-        } catch (Exception e) {
+        if (countText.equals("")) {
             return 0;
         }
+        return Integer.parseInt(countText);
     }
 
-    public void addProductByIndex(int productNumber) {
+    public void addProductByIndex(int productNumber) throws InterruptedException {
+        Thread.sleep(2000);
+
         List<WebElement> allProducts = driver.findElements(By.cssSelector(".card-body"));
         WebElement myProduct = allProducts.get(productNumber);
 
-        // CHANGE THIS LOCATOR - Use this instead of your old one
         WebElement addToCartButton = myProduct.findElement(By.xpath(".//button[contains(text(),'Add To Cart')]"));
         addToCartButton.click();
 
-        // Wait for 1 second for cart to update
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {
-        }
+        Thread.sleep(1500);
     }
 
-    public void addFirstProduct() {
+    public void addFirstProduct() throws InterruptedException {
         addProductByIndex(0);
     }
 
-    public void addSecondProduct() {
+    public void addSecondProduct() throws InterruptedException {
         addProductByIndex(1);
     }
 
-    public void addThirdProduct() {
+    public void addThirdProduct() throws InterruptedException {
         addProductByIndex(2);
+    }
+
+    public void clickCartIcon() throws InterruptedException {
+        Thread.sleep(1000);
+        WebElement cartIcon = driver.findElement(By.xpath("//button[@routerlink='/dashboard/cart']"));
+        cartIcon.click();
+        Thread.sleep(2000);
     }
 }

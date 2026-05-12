@@ -176,9 +176,8 @@ public class Testing extends BaseTest
             Assert.assertTrue(price.isDisplayed());
         }
     }
-    //error occured
     @Test(priority = 7)
-    public void verifySingleProductAddToCart() {
+    public void verifySingleProductAddToCart() throws InterruptedException {
 
         LoginPage loginPage = new LoginPage(driver, wait);
         ProductPage productPage = new ProductPage(driver, wait);
@@ -192,7 +191,7 @@ public class Testing extends BaseTest
     }
 
     @Test(priority = 8)
-    public void verifyMultipleProductsAddToCart() {
+    public void verifyMultipleProductsAddToCart() throws InterruptedException {
         LoginPage loginPage = new LoginPage(driver, wait);
         ProductPage productPage = new ProductPage(driver, wait);
         loginPage.login("srinivas1408@gmail.com", "Abcd@1234");
@@ -207,6 +206,9 @@ public class Testing extends BaseTest
 
         Assert.assertEquals(countAfter, countBefore + 3);
     }
+
+
+
 }
 
 
